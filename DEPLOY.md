@@ -1,4 +1,4 @@
-# 部署 · 拾字工坊 · 熔炉模式
+﻿# 部署 · 拾字工坊 · 熔炉模式
 
 > **已上线：<https://long559-afk.github.io/word-foundry-forge/>**
 >
@@ -34,7 +34,7 @@ git push
 GitHub Pages 的 `*.github.io` 在部分网络环境下会慢或打不开。如果朋友反馈打不开：
 
 1. 打开 <https://app.netlify.com/drop> 并登录（只有部署者需要登录）。
-2. 把 **`pixel-foundry.zip`** 或 `pixel-foundry-site/` 文件夹拖进去。
+2. 把 **`pixel-foundry-site.zip`** 或 `pixel-foundry-site/` 文件夹拖进去。
 3. 等 10–30 秒，得到 `https://<随机名>.netlify.app`，把这个链接发给朋友。
 4. 以后更新：Netlify → Sites → 你的站点 → Deploys → 底部拖放区，拖新文件夹；**不要**重新 Drop 新建站点，否则网址会变。
 
@@ -63,3 +63,4 @@ GitHub Pages 的 `*.github.io` 在部分网络环境下会慢或打不开。如�
 - 词库：CC BY-NC-SA 4.0，**仅限非商业**；公开免费试玩可以，商业化前必须换库。
 - BGM：原创合成 `assets/audio/forge-loop.wav`，不依赖外部版权音乐。
 - 手机端未适配；建议桌面或横屏平板。
+
