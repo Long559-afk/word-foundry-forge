@@ -1,5 +1,7 @@
 ﻿# 拾字工坊 · 熔炉模式 / Word Foundry — Forge
 
+> **在线试玩：<https://long559-afk.github.io/word-foundry-forge/>**
+
 像素风 · 小写字母 · 不限时回合 · 可储存技能牌 · 按词库频率配牌 · 双行 30 张手牌。
 
 这是《拾字工坊》的**熔炉玩法原型**：暗钢、炉火、火花、街机反馈；
@@ -207,5 +209,6 @@ node dev/shot.js http://127.0.0.1:8123/ shot.png bust
 - 词库：CC BY-NC-SA 4.0（exam-data/CETVocabulary），**非商业**。
 - 字体：Press Start 2P（OFL）、Ark Pixel 12px（OFL）。
 - 未使用任何外部游戏截图、商业素材或未授权音频。
+
 
 
