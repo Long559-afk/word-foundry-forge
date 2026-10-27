@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080c11">
+<meta name="description" content="拾字工坊 · 熔炉模式：小写字母、可储存技能牌、不限时回合、按词库频率配牌的像素拼词游戏。">
+<title>拾字工坊 · 熔炉模式 / Word Foundry Forge</title>
+<link rel="icon" type="image/png" href="assets/ic-anvil.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="viewport">
+  <div id="stage" aria-label="拾字工坊 熔炉模式">
+
+    <div class="bg" aria-hidden="true"></div>
+    <canvas id="fx" width="1280" height="720" aria-hidden="true"></canvas>
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+
+    <header class="hud">
+      <div class="brand">
+        <img class="brand-icon" src="assets/ic-anvil.png" alt="">
+        <div class="brand-copy">
+          <div class="brand-en">WORD FOUNDRY</div>
+          <div class="brand-cn">拾字工坊 · 熔炉</div>
+        </div>
+      </div>
+
+      <div class="score-box">
+        <div class="hud-label">SCORE</div>
+        <div class="score-line">
+          <span id="score" class="score-num">0</span>
+          <span class="score-target">/ 2,000</span>
+        </div>
+        <div class="score-bar"><i id="score-bar"></i></div>
+      </div>
+
+      <div class="combo-box" id="combo-box">
+        <div class="hud-label">COMBO</div>
+        <div class="combo-num" id="combo">×1.0</div>
+      </div>
+
+      <div class="round-box">
+        <div class="hud-label">ROUND <span id="round">1</span></div>
+        <button class="btn end-round" id="btn-end-round" title="结束本回合并抽 5 张牌">结束回合</button>
+      </div>
+
+      <div class="hud-actions">
+        <button class="icon-btn" id="btn-bgm" title="BGM 开关" aria-label="BGM 开关">♫</button>
+        <button class="icon-btn" id="btn-sound" title="音效开关" aria-label="音效开关">♪</button>
+        <button class="icon-btn" id="btn-info" title="技能与牌堆说明" aria-label="技能与牌堆说明">i</button>
+      </div>
+    </header>
+
+    <main class="board">
+      <div class="mascot-wrap">
+        <div class="bubble" id="bubble">把字母锻成单词。</div>
+        <img class="mascot" id="mascot" src="assets/cat-idle.png" alt="熔炉猫">
+      </div>
+
+      <section class="panel spell-panel">
+        <div class="panel-head">
+          <span class="panel-title">FORGE A WORD</span>
+          <span class="panel-sub" id="round-hint">3–10 个字母 · 不限时</span>
+        </div>
+
+        <div class="slots" id="slots"></div>
+
+        <div class="spell-controls">
+          <button class="btn ghost" id="btn-clear">清空</button>
+          <button class="btn ghost" id="btn-undo">撤销</button>
+          <button class="btn forge" id="btn-forge">锻 造 <kbd>ENTER</kbd></button>
+        </div>
+        <div class="panel-tip" id="panel-tip">长词加成 · 连击 ×3.0 封顶 · 重复词衰减</div>
+        <div class="word-preview" id="word-preview">点击下方字母牌，按顺序拼出单词</div>
+      </section>
+
+      <aside class="panel skill-panel" id="skill-panel">
+        <div class="panel-head skill-head">
+          <span class="panel-title">SKILL DECK</span>
+          <span class="panel-sub"><b id="skill-count">0</b>/5</span>
+        </div>
+        <div class="skill-list" id="skill-list"></div>
+        <div class="skill-tip">每回合 +1 · 可储存 · 点击使用</div>
+      </aside>
+    </main>
+
+    <section class="hand-area">
+      <div class="hand-head">
+        <span class="hand-label">HAND</span>
+        <span class="hand-count"><b id="hand-count">15</b><em>/30</em></span>
+        <div class="heat" id="heat" aria-hidden="true"></div>
+        <span class="hand-tip" id="hand-tip">两行 · 30 张过热</span>
+      </div>
+      <div class="hand" id="hand"></div>
+    </section>
+
+    <div class="target-bar hidden" id="target-bar">
+      <span id="target-text">选择卡牌</span>
+      <button class="btn ghost small" id="btn-target-confirm" disabled>确认</button>
+      <button class="btn ghost small" id="btn-target-cancel">取消</button>
+    </div>
+
+    <div class="banner" id="banner" aria-hidden="true"></div>
+    <div class="toast" id="toast" role="status"></div>
+    <div class="flash" id="flash" aria-hidden="true"></div>
+
+    <div class="overlay menu" id="menu">
+      <div class="menu-glow" aria-hidden="true"></div>
+      <div class="menu-inner">
+        <div class="menu-kicker">FORGE MODE · PIXEL BUILD</div>
+        <img class="menu-mascot" src="assets/cat-hype.png" alt="">
+        <h1 class="menu-title">WORD<br>FOUNDRY</h1>
+        <div class="menu-cn">拾字工坊 · 熔炉</div>
+        <p class="menu-tag">把散落的字母，锻成单词。</p>
+        <div class="menu-rules">
+          <div><b>15</b><span>初始手牌</span></div>
+          <div><b>+5</b><span>结束回合抽牌</span></div>
+          <div><b>30</b><span>手牌上限</span></div>
+          <div><b>2,000</b><span>目标分</span></div>
+        </div>
+        <button class="btn forge big" id="btn-start">开始锻造 <kbd>ENTER</kbd></button>
+        <div class="menu-foot">小写字母 · 技能牌 · 回合不限时 · 词库频率配牌</div>
+      </div>
+    </div>
+
+    <div class="overlay result hidden" id="result">
+      <div class="result-card">
+        <div class="result-kicker" id="result-kicker">FORGE COMPLETE</div>
+        <h2 class="result-title" id="result-title">VICTORY</h2>
+        <div class="result-score" id="result-score">0</div>
+        <div class="result-sub" id="result-sub">锻造 0 个单词 · 最高分 0</div>
+        <div class="result-words" id="result-words"></div>
+        <button class="btn forge big" id="btn-again">再来一局 <kbd>ENTER</kbd></button>
+      </div>
+    </div>
+
+    <div class="overlay modal hidden" id="modal">
+      <div class="modal-card">
+        <div class="modal-head">
+          <span id="modal-title">技能与牌堆</span>
+          <button class="icon-btn" id="btn-modal-close" aria-label="关闭">×</button>
+        </div>
+        <div class="modal-body" id="modal-body"></div>
+      </div>
+    </div>
+
+    <div class="overlay picker hidden" id="picker">
+      <div class="picker-card">
+        <div class="picker-head">选择字母 <span>TRANSMUTE</span></div>
+        <div class="picker-grid" id="picker-grid"></div>
+        <div class="picker-foot">
+          <button class="btn ghost" id="btn-picker-cancel">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay skill-full hidden" id="skill-full">
+      <div class="skill-full-card">
+        <div class="skill-full-kicker">SKILL DECK FULL</div>
+        <h2>技能牌已满 5 张</h2>
+        <p>点击下面一张技能牌选择要丢弃的，点“丢弃并抽取”换新；或者保留全部，本回合不获得新技能牌。</p>
+        <div class="skill-full-list" id="skill-full-list"></div>
+        <div class="skill-full-actions">
+          <button class="btn forge" id="btn-skill-replace" disabled>丢弃并抽取</button>
+          <button class="btn ghost" id="btn-skill-keep">保留，本回合不获得</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<audio id="bgm" src="assets/audio/forge-loop.wav" loop preload="auto"></audio>
+
+<script src="words.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
+
+
+
